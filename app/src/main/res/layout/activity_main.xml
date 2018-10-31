@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnViagem"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="Viagem em tempo real"/>
+
+        <Button
+            android:id="@+id/btnPrevisao"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="Previsão" />
+
+        <Button
+            android:id="@+id/btnAutocarroIdeal"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="Autocarro ideal" />
+
+    </LinearLayout>
+
+</LinearLayout>

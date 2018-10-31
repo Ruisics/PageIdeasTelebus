@@ -1,0 +1,40 @@
+package com.rp.pageideastelebus;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+        final Button btnPrevisao = findViewById(R.id.btnPrevisao);
+        final Button btnAutocarroIdeal = findViewById(R.id.btnAutocarroIdeal);
+
+        OnClick();
+
+    }
+
+    public void OnClick(){
+
+        final Button btnViagem = findViewById(R.id.btnViagem);
+
+        btnViagem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), ViagemActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+}
