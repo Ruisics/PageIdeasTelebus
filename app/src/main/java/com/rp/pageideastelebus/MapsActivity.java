@@ -66,7 +66,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 updateLocation(lastKnownLocation);
 
+                LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+
+            }  else {
+
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
             }
+
+        } else {
+
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
         }
     }
@@ -135,6 +147,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+                if(location != null){
+
+                    updateLocation(location);
+
+                }
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
     }
 
 
@@ -153,50 +193,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnMapLongClickListener(this);
 
-        Intent intent = getIntent();
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
 
-        if (intent.getIntExtra("placeNumber", 0) == 0){
-
-            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-
+                if(location != null) {
                     updateLocation(location);
-
                 }
 
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
-                }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
 
-                @Override
-                public void onProviderEnabled(String provider) {
+            }
 
-                }
+            @Override
+            public void onProviderEnabled(String provider) {
 
-                @Override
-                public void onProviderDisabled(String provider) {
+            }
 
-                }
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
             };
 
-            if (Build.VERSION.SDK_INT < 23){
+        if (Build.VERSION.SDK_INT < 23){
 
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-                }
+            }
 
-            } else {
+        } else {
 
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                    
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                if (lastKnownLocation != null) {
 
                     updateLocation(lastKnownLocation);
 
@@ -204,15 +244,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
 
-
-                } else {
-
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
                 }
 
-            }
 
+            } else {
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+            }
         }
 
     }
