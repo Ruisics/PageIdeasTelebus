@@ -1,9 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MapsActivity" />
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:gravity="center"
+        android:text="Map" />
+
+        <FrameLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+
+            <EditText
+                android:id="@+id/editTextOrigem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Origem"
+                android:drawableRight="@drawable/placeholder"
+                android:drawableEnd="@drawable/placeholder" />
+            <Button
+                android:id="@+id/btnOrigem"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:text=" "
+                android:background="?android:attr/selectableItemBackground" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/editTextDestino"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Destino"
+                android:drawableRight="@drawable/placeholder"
+                android:drawableEnd="@drawable/placeholder" />
+
+            <Button
+                android:id="@+id/btnDestino"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:text=" "
+                android:background="?android:attr/selectableItemBackground" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MapsActivity" />
+
+</LinearLayout>

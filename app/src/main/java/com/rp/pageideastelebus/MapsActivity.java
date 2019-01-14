@@ -22,10 +22,17 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.Api.ApiOptions.NoOptions;
+import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,9 +51,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, View.OnClickListener {
 
     private GoogleMap mMap;
+
+    EditText editTextOrigem;
+    EditText editTextDestino;
+    Button btnOrigem;
+    Button btnDestino;
 
     LocationManager locationManager;
     LocationListener locationListener;
@@ -60,19 +72,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
 
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                updateLocation(lastKnownLocation);
+                updateLocationMarker(lastKnownLocation);
 
                 LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
 
             }  else {
 
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
             }
 
@@ -83,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void updateLocation(Location location){
+    public void updateLocationMarker(Location location){
 
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
@@ -147,13 +159,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+        editTextOrigem = findViewById(R.id.editTextOrigem);
+        editTextDestino = findViewById(R.id.editTextDestino);
+        btnOrigem = findViewById(R.id.btnOrigem);
+        btnDestino = findViewById(R.id.btnDestino);
+
+        btnOrigem.setOnClickListener(this);
+        btnDestino.setOnClickListener(this);
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
 
                 if(location != null){
 
-                    updateLocation(location);
+                    updateLocationMarker(location);
+                    Log.i("Location: ", location.toString());
 
                 }
 
@@ -177,6 +198,117 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onClick(View v) {
+
+        if (v == btnOrigem){
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
+
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                LatLng latLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                String address = "";
+
+                try {
+
+                    List<Address> listAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+                    if (listAddresses != null && listAddresses.size() > 0){
+
+                        if (listAddresses.get(0).getThoroughfare() != null) {
+
+                            if (listAddresses.get(0).getSubThoroughfare() != null){
+
+                                address += listAddresses.get(0).getSubThoroughfare() + " ";
+
+                            }
+
+                            address += listAddresses.get(0).getThoroughfare();
+
+                        }
+
+                    }
+
+                } catch (IOException e) {
+
+                    e.printStackTrace();
+
+                }
+
+                if (address == ""){
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm yyyy-MM-dd");
+                    address = sdf.format(new Date());
+
+                }
+
+                Log.i("Origem: ", address);
+                editTextOrigem.setText(address);
+
+            }
+
+        }
+
+        if (v == btnDestino) {
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
+
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                LatLng latLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+                String address = "";
+
+                try {
+
+                    List<Address> listAddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+                    if (listAddresses != null && listAddresses.size() > 0) {
+
+                        if (listAddresses.get(0).getThoroughfare() != null) {
+
+                            if (listAddresses.get(0).getSubThoroughfare() != null) {
+
+                                address += listAddresses.get(0).getSubThoroughfare() + " ";
+
+                            }
+
+                            address += listAddresses.get(0).getThoroughfare();
+
+                        }
+
+                    }
+
+                } catch (IOException e) {
+
+                    e.printStackTrace();
+
+                }
+
+                if (address == "") {
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm yyyy-MM-dd");
+                    address = sdf.format(new Date());
+
+                }
+
+                Log.i("Destino: ", address);
+                editTextDestino.setText(address);
+
+            }
+        }
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -187,6 +319,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -199,7 +332,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationChanged(Location location) {
 
                 if(location != null) {
-                    updateLocation(location);
+                    updateLocationMarker(location);
+                    Log.i("Location: ", location.toString());
                 }
 
             }
@@ -224,7 +358,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
 
             }
 
@@ -232,17 +366,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
 
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if (lastKnownLocation != null) {
 
-                    updateLocation(lastKnownLocation);
+                    updateLocationMarker(lastKnownLocation);
 
                     LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
 
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 17));
 
                 }
 
